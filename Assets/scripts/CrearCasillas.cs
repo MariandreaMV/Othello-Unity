@@ -29,12 +29,14 @@ public class CrearCasillas : MonoBehaviour {
 
 	public void InteligenciaArtificial(){
 		IA = true;
-			Reiniciar ();
+		Reiniciar ();
+		ShowGameObject ();
 	}
 
 	public void HvsH(){
 		IA = false;
-			Reiniciar ();
+		Reiniciar();
+		ShowGameObject ();
 	}
 
 	public void Pistas(){
@@ -52,11 +54,11 @@ public class CrearCasillas : MonoBehaviour {
 
 		if (inicio == true){
 			
-			 JugadorTurno = Instantiate (JTurno, new Vector3(6,-1.5f,1),Quaternion.identity);
+			JugadorTurno = Instantiate (JTurno, new Vector3(6,-1.5f,1),Quaternion.identity);
 
-			for(int x=0 ; x<ancho; x++){	
+			for (int x = 0 ; x < ancho; x++) {	
 					
-				for(int y=0; y<alto; y++){
+				for (int y = 0; y < alto; y++) {
 					
 					GameObject casillaCreada = Instantiate (casillasTablero, new Vector3(x-1f,y+0.01f,1), Quaternion.identity);//instancio el objeto	
 
@@ -108,8 +110,6 @@ public class CrearCasillas : MonoBehaviour {
 
 	public void Reiniciar(){
 
-		Start ();
-
 		GameObject c;
 
 		for (int x = 0; x < 64; x++) {
@@ -120,10 +120,10 @@ public class CrearCasillas : MonoBehaviour {
 			if (x == 28 || x == 35) {
 				c.GetComponent<Casilla> ().PonerColorFicha (Jugador1);
 				c.GetComponent<Casilla>().setEstado(1);//posicion inicial del jugador 1
-			}else if (x == 27 || x == 36) {
+			} else if (x == 27 || x == 36) {
 				c.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
 				c.GetComponent<Casilla>().setEstado (2);//posicion inicial del jugador 2
-			} else{ 
+			} else { 
 				c.GetComponent<Casilla> ().PonerColorFicha (vacio);
 				c.GetComponent<Casilla> ().setEstado (0); //asigno estado de la casilla
 			}
@@ -144,20 +144,20 @@ public class CrearCasillas : MonoBehaviour {
 		int enemigo;
 		int estadoCasillaActual;
 
-		if(turno == 1)
+		if (turno == 1)
 			enemigo = 2;
 		else
 			enemigo = 1;
 
 		//limpia los estados anteriores.
-		for(int x=0;x<tam;x++){
+		for (int x = 0; x < tam; x++){
 			for (int y = 0; y < tam; y++) {
 				tab[x,y].GetComponent<Casilla>().setMovimientoPosible(false);
 			}
 		}
 
 
-		for(int x=0;x<tam;x++){
+		for (int x = 0; x < tam; x++){
 			for (int y = 0; y < tam; y++) {
 				
 				enemigoEncontrado = false;
@@ -180,7 +180,7 @@ public class CrearCasillas : MonoBehaviour {
 				}
 
 				//casilla de la izquierda
-				for(int k= y-1 ; k>=0 ; k--){
+				for (int k = y-1 ; k >= 0 ; k--){
 					if (tab [x, k].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -195,7 +195,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casilla de la derecha
-				for(int k= y+1 ; k<tam ; k++){
+				for (int k = y+1 ; k<tam ; k++){
 					if (tab [x, k].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -210,7 +210,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casillas de arriba
-				for(int k= x-1 ; k>= 0; k--){
+				for (int k = x-1 ; k>= 0; k--){
 					if (tab [k, y].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -225,7 +225,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casillas de abajo
-				for(int k= x+1 ; k<tam; k++){
+				for(int k = x+1 ; k<tam; k++){
 					if (tab [k, y].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -563,7 +563,7 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	//ciclo que se realiza constantemente
-	void Update(){
+	void Update() {
 
 		//solo voy a evaluar si ya inicio una partida.
 		if (inicio == false) {
@@ -605,11 +605,19 @@ public class CrearCasillas : MonoBehaviour {
 
 	}//fin update
 
-	public void DestroyGameObject()
-	{
-		foreach (GameObject o in GameObject.FindGameObjectsWithTag("Clone")) {
-			Destroy (o);
+	public void HideGameObject() {
+		GameObject c;
+		for (int x = 0; x < 64; x++) {
+			c = tablero [x];
+			c.SetActive (false);
 		}
 	}
 
+	public void ShowGameObject() {
+		GameObject c;
+		for (int x = 0; x < 64; x++) {
+			c = tablero [x];
+			c.SetActive (true);
+		}	
+	}
 }
