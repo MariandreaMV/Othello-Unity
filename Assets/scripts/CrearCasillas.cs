@@ -15,7 +15,6 @@ public class CrearCasillas : MonoBehaviour {
 	public int ancho;
 	public int alto;
 
-
 	//variables privadas, solo para mi control
 	int turno = 1;
 	int tam = 8;
@@ -53,7 +52,7 @@ public class CrearCasillas : MonoBehaviour {
 
 		if (inicio == true){
 			
-			 JugadorTurno = Instantiate (JTurno, new Vector3(0,8,1),Quaternion.identity);
+			 JugadorTurno = Instantiate (JTurno, new Vector3(6,-1.5f,1),Quaternion.identity);
 
 			for(int x=0 ; x<ancho; x++){	
 					
@@ -108,6 +107,8 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	public void Reiniciar(){
+
+		Start ();
 
 		GameObject c;
 
@@ -603,5 +604,12 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	}//fin update
+
+	public void DestroyGameObject()
+	{
+		foreach (GameObject o in GameObject.FindGameObjectsWithTag("Clone")) {
+			Destroy (o);
+		}
+	}
 
 }

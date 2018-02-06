@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: d9a1969f909f3c141a841c7e1214fe8c
+timeCreated: 1517882146
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Othello MT Std
+  fontNames:
+  - Othello MT Std
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
