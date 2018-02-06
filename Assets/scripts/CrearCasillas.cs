@@ -24,9 +24,9 @@ public class CrearCasillas : MonoBehaviour {
 	GameObject[,] tab = new GameObject[8, 8];//matriz cuadritos, tablero
 	bool inicio = true;
 	bool pistas = false;
-	bool IA=false;
-	GameObject JugadorTurno ;
-	int numeroMovimientosPosibles=0;
+	bool IA = false;
+	GameObject JugadorTurno;
+	int numeroMovimientosPosibles = 0;
 
 	public void InteligenciaArtificial(){
 		IA = true;
@@ -53,28 +53,29 @@ public class CrearCasillas : MonoBehaviour {
 
 		if (inicio == true){
 			
-			 JugadorTurno = Instantiate (JTurno, new Vector3(9,0,6),Quaternion.identity);
+			 JugadorTurno = Instantiate (JTurno, new Vector3(0,8,1),Quaternion.identity);
 
 			for(int x=0 ; x<ancho; x++){	
 					
 				for(int y=0; y<alto; y++){
 					
-					GameObject casillaCreada = Instantiate (casillasTablero, new Vector3 (y,0,x), Quaternion.identity);//instancio el objeto	
+					GameObject casillaCreada = Instantiate (casillasTablero, new Vector3(x-1f,y+0.01f,1), Quaternion.identity);//instancio el objeto	
+
 					casillaCreada.GetComponent<Casilla> ().setEstado (0); //asigno estado de la casilla
 
-						if (inicio == true && (contCasillas == 28 || contCasillas == 35)) {//posiciones centrales para inicializar partida
-							casillaCreada.GetComponent<Casilla> ().PonerColorFicha (Jugador1);
-							casillaCreada.GetComponent<Casilla>().setEstado(1);//posicion inicial del jugador 1
-						}
+					if (inicio == true && (contCasillas == 28 || contCasillas == 35)) {//posiciones centrales para inicializar partida
+						casillaCreada.GetComponent<Casilla> ().PonerColorFicha (Jugador1);
+						casillaCreada.GetComponent<Casilla>().setEstado(1);//posicion inicial del jugador 1
+					}
 
 					if (inicio == true && (contCasillas == 27 || contCasillas == 36)) {//posiciones centrales para inicializar partida
-							casillaCreada.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
-							casillaCreada.GetComponent<Casilla>().setEstado (2);//posicion inicial del jugador 2
-						}
+						casillaCreada.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
+						casillaCreada.GetComponent<Casilla>().setEstado (2);//posicion inicial del jugador 2
+					}
 	
 					casillaCreada.GetComponent<Casilla>().setPosicion(x,y); // ubicacion matricial
 					casillaCreada.GetComponent<Casilla>().setMovimientoPosible(false); //no es movimiento posible aun
-					casillaCreada.GetComponent<Casilla> ().AsignarNumeroCasilla (contCasillas);// id de la casilla
+					casillaCreada.GetComponent<Casilla>().AsignarNumeroCasilla (contCasillas);// id de la casilla
 					tablero.Add (casillaCreada); // guardo la casilla en el array tablero para luego evaluar juego
 					tab[x,y]= casillaCreada;//guardo el objeto en la matriz
 
@@ -84,10 +85,10 @@ public class CrearCasillas : MonoBehaviour {
 			setMovimientosPosibles ();//movimientos posibles a turno 1
 			pintarPosibleJugadas();//pinta posibles jugadas;
 			inicio = false;//ya no esta iniciando partida.
-		}else Reiniciar();// si no se reinician los valores de cada casilla para reiniciar
+		} else Reiniciar();// si no se reinician los valores de cada casilla para reiniciar
 
 		colorJugadorActual = JugadorTurno;
-		JugadorTurno.GetComponent<Turno> ().setColores (Jugador1,Jugador2);
+		//JugadorTurno.GetComponent<Turno> ().setColores (Jugador1,Jugador2);
 		JugadorTurno.GetComponent<Turno> ().PonerColorTurno (turno);
 
 	}//fin crear
@@ -130,7 +131,7 @@ public class CrearCasillas : MonoBehaviour {
 
 		turno = 1;
 		setMovimientosPosibles ();
-		pintarPosibleJugadas();
+		//pintarPosibleJugadas();
 		colorJugadorActual.GetComponent<Turno> ().PonerColorTurno (turno);
 	}//fin reiniciar
 
