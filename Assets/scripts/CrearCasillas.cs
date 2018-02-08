@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+
+using UnityEngine.UI;
 
 public class CrearCasillas : MonoBehaviour {
 
@@ -13,9 +14,13 @@ public class CrearCasillas : MonoBehaviour {
 	public Material Jugador2;
 	public Material vacio;
 	public Material posibleJ;
+	public Material error;
 	public int ancho;
 	public int alto;
-
+	public Text TextoP1;
+	public Text TextoP2;
+	public GameObject OverTexto;
+	public Text Ganador;
 
 	//variables privadas, solo para mi control
 	GameObject JugadorTurno ;
@@ -92,7 +97,8 @@ public class CrearCasillas : MonoBehaviour {
 				}
 			}
 			setMovimientosPosibles ();//movimientos posibles a turno 1
-			pintarPosibleJugadas();//pinta posibles jugadas;
+			pintarPosibleJugadas ();//pinta posibles jugadas;
+			Puntajes ();
 			inicio = false;//ya no esta iniciando partida.
 		} else Reiniciar();// si no se reinician los valores de cada casilla para reiniciar
 
@@ -124,7 +130,8 @@ public class CrearCasillas : MonoBehaviour {
 	}
 		
 	public void Reiniciar(){
-
+		OverTexto.SetActive (false);
+		Ganador.text = "";
 		GameObject c;
 
 		for (int x = 0; x < 64; x++) {
@@ -502,7 +509,7 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	public void pintar(){
-
+		
 		for(int x=0; x<tam;x++){
 
 			for(int y=0;y<tam;y++){
@@ -631,11 +638,14 @@ public class CrearCasillas : MonoBehaviour {
 			}
 		}
 
-		print ("J1 = NEGRAS = " + puntos1);
+		TextoP1.text = puntos2.ToString ();
+		TextoP2.text = puntos1.ToString ();
+
+		/*print ("J1 = NEGRAS = " + puntos1);
 		if (IA)
 			print ("IA = BLANCAS = " + puntos2);
 		else
-			print ("J2 = BLANCAS = " + puntos2);
+			print ("J2 = BLANCAS = " + puntos2);*/
 
 	}
 
@@ -694,10 +704,33 @@ public class CrearCasillas : MonoBehaviour {
 							validar ();
 						}
 
+						Puntajes ();
+
 						if (finJuego) {
 							print("FIN JUEGO");
+							HideGameObject ();
+							OverTexto.SetActive (true);
 							Puntajes ();
-							pintarFIN ();
+							if (IA) {
+								if (puntos1 > puntos2) {
+									Ganador.text = "Gana Negras";
+								} else if (puntos2 > puntos1) {
+									Ganador.text = "Gana IA";
+								} else {
+									Ganador.text = "Empate";
+								}
+							} else {
+								if (puntos1 > puntos2) {
+									Ganador.text = "Gana Negras";
+								} else if (puntos2 > puntos1) {
+									Ganador.text = "Gana Blancas";
+								} else {
+									Ganador.text = "Empate";
+								}
+							}
+
+
+							//pintarFIN ();
 						}
 						if (pistas)
 							Pistas ();
@@ -705,7 +738,8 @@ public class CrearCasillas : MonoBehaviour {
 
 					} else {
 						//print ("movimiento no valido");
-						EditorUtility.DisplayDialog ("Jugada Erronea", "Has jugado en una casilla incorrecta", "ok");
+						//EditorUtility.DisplayDialog ("Jugada Erronea", "Has jugado en una casilla incorrecta", "Entiendo :(");
+						c.GetComponent<Casilla> ().PonerColorFicha(error);
 					}
 					c.GetComponent<Casilla> ().NoPresionar ();
 				} //fin presionada
