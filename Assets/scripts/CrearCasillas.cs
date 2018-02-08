@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class CrearCasillas : MonoBehaviour {
 
@@ -15,51 +16,58 @@ public class CrearCasillas : MonoBehaviour {
 	public int ancho;
 	public int alto;
 
+
 	//variables privadas, solo para mi control
+	GameObject JugadorTurno ;
+	GameObject colorJugadorActual;//sphere
+	GameObject[,] tab = new GameObject[8, 8];//matriz cuadritos, tablero
 	int turno = 1;
 	int tam = 8;
 	int contCasillas = 0;
-	GameObject colorJugadorActual;//sphere
-	GameObject[,] tab = new GameObject[8, 8];//matriz cuadritos, tablero
+	int numeroMovimientosPosibles=0;
+	int puntos1 = 0;
+	int puntos2 = 0;
 	bool inicio = true;
 	bool pistas = false;
 	bool IA = false;
-	GameObject JugadorTurno;
-	int numeroMovimientosPosibles = 0;
+	bool finJuego = false;
+
 
 	public void InteligenciaArtificial(){
 		IA = true;
+		finJuego = false;
 		Reiniciar ();
 		ShowGameObject ();
 	}
 
 	public void HvsH(){
 		IA = false;
-		Reiniciar();
+		finJuego = false;
+		Reiniciar ();
 		ShowGameObject ();
 	}
 
 	public void Pistas(){
-		
+
 		if (pistas)
 			pistas = false;
 		else pistas = true;
 
 		if(contCasillas!=0)
-		pintarPosibleJugadas();
+			pintarPosibleJugadas();
 	}
 
 	//solo se ejecuta al presionar el boton iniciar partida.
 	public void Start(){
 
 		if (inicio == true){
-			
+
 			JugadorTurno = Instantiate (JTurno, new Vector3(6,-1.5f,1),Quaternion.identity);
 
 			for (int x = 0 ; x < ancho; x++) {	
-					
+
 				for (int y = 0; y < alto; y++) {
-					
+
 					GameObject casillaCreada = Instantiate (casillasTablero, new Vector3(x-1f,y+0.01f,1), Quaternion.identity);//instancio el objeto	
 
 					casillaCreada.GetComponent<Casilla> ().setEstado (0); //asigno estado de la casilla
@@ -73,7 +81,7 @@ public class CrearCasillas : MonoBehaviour {
 						casillaCreada.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
 						casillaCreada.GetComponent<Casilla>().setEstado (2);//posicion inicial del jugador 2
 					}
-	
+
 					casillaCreada.GetComponent<Casilla>().setPosicion(x,y); // ubicacion matricial
 					casillaCreada.GetComponent<Casilla>().setMovimientoPosible(false); //no es movimiento posible aun
 					casillaCreada.GetComponent<Casilla>().AsignarNumeroCasilla (contCasillas);// id de la casilla
@@ -96,6 +104,7 @@ public class CrearCasillas : MonoBehaviour {
 
 
 
+
 	public void cambiarTurno(){
 		if (turno == 1)
 			turno = 2;
@@ -105,25 +114,31 @@ public class CrearCasillas : MonoBehaviour {
 		colorJugadorActual.GetComponent<Turno> ().PonerColorTurno (turno);
 		pintarPosibleJugadas();
 	}//fin cambiar turno
+
+	public void cambiarTurno2(){
+		if (turno == 1)
+			turno = 2;
+		else
+			turno = 1;
+		setMovimientosPosibles ();
+	}
 		
-
-
 	public void Reiniciar(){
 
 		GameObject c;
 
 		for (int x = 0; x < 64; x++) {
-			
+
 			c = tablero [x];
 			c.GetComponent<Casilla>().setMovimientoPosible(false); //no es movimiento posible aun
 
 			if (x == 28 || x == 35) {
 				c.GetComponent<Casilla> ().PonerColorFicha (Jugador1);
 				c.GetComponent<Casilla>().setEstado(1);//posicion inicial del jugador 1
-			} else if (x == 27 || x == 36) {
+			}else if (x == 27 || x == 36) {
 				c.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
 				c.GetComponent<Casilla>().setEstado (2);//posicion inicial del jugador 2
-			} else { 
+			} else{ 
 				c.GetComponent<Casilla> ().PonerColorFicha (vacio);
 				c.GetComponent<Casilla> ().setEstado (0); //asigno estado de la casilla
 			}
@@ -144,27 +159,27 @@ public class CrearCasillas : MonoBehaviour {
 		int enemigo;
 		int estadoCasillaActual;
 
-		if (turno == 1)
+		if(turno == 1)
 			enemigo = 2;
 		else
 			enemigo = 1;
 
 		//limpia los estados anteriores.
-		for (int x = 0; x < tam; x++){
+		for(int x=0;x<tam;x++){
 			for (int y = 0; y < tam; y++) {
 				tab[x,y].GetComponent<Casilla>().setMovimientoPosible(false);
 			}
 		}
 
 
-		for (int x = 0; x < tam; x++){
+		for(int x=0;x<tam;x++){
 			for (int y = 0; y < tam; y++) {
-				
+
 				enemigoEncontrado = false;
 				estadoCasillaActual = tab[x,y].GetComponent<Casilla> ().getEstado ();
 
 				while(estadoCasillaActual!=0){
-					
+
 					y++;
 					if (y < tam) {
 						estadoCasillaActual = tab [x, y].GetComponent<Casilla> ().getEstado ();
@@ -173,14 +188,14 @@ public class CrearCasillas : MonoBehaviour {
 						x++;
 						if (x >= tam) 
 							return;
-						 else 
+						else 
 							estadoCasillaActual = tab [x, y].GetComponent<Casilla> ().getEstado ();
-						
+
 					}
 				}
 
 				//casilla de la izquierda
-				for (int k = y-1 ; k >= 0 ; k--){
+				for(int k= y-1 ; k>=0 ; k--){
 					if (tab [x, k].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -195,7 +210,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casilla de la derecha
-				for (int k = y+1 ; k<tam ; k++){
+				for(int k= y+1 ; k<tam ; k++){
 					if (tab [x, k].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -210,7 +225,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casillas de arriba
-				for (int k = x-1 ; k>= 0; k--){
+				for(int k= x-1 ; k>= 0; k--){
 					if (tab [k, y].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -225,7 +240,7 @@ public class CrearCasillas : MonoBehaviour {
 				enemigoEncontrado = false;
 
 				//casillas de abajo
-				for(int k = x+1 ; k<tam; k++){
+				for(int k= x+1 ; k<tam; k++){
 					if (tab [k, y].GetComponent<Casilla> ().getEstado () == enemigo)
 						enemigoEncontrado = true;
 					else {
@@ -331,7 +346,7 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	public void Jugar(int fila, int colu){
-		
+
 		bool enemigoEncontrado = false;
 		int enemigo;
 
@@ -350,7 +365,7 @@ public class CrearCasillas : MonoBehaviour {
 						tab [fila, k].GetComponent<Casilla> ().setEstado (turno);//creo que aqui pinto
 					}
 				break;
-				}
+			}
 		}//fin for
 
 		enemigoEncontrado = false;
@@ -402,7 +417,7 @@ public class CrearCasillas : MonoBehaviour {
 		enemigoEncontrado = false;
 
 		int r, c;
-	
+
 		r = fila - 1;
 		c = colu - 1;
 
@@ -422,7 +437,7 @@ public class CrearCasillas : MonoBehaviour {
 		}
 
 		enemigoEncontrado = false;
-	
+
 
 		r = fila - 1;
 		c = colu + 1;
@@ -464,7 +479,7 @@ public class CrearCasillas : MonoBehaviour {
 		}
 
 		enemigoEncontrado = false;
-	
+
 		r = fila + 1;
 		c = colu + 1;
 
@@ -487,46 +502,43 @@ public class CrearCasillas : MonoBehaviour {
 
 
 	public void pintar(){
-	
-		GameObject c;
 
 		for(int x=0; x<tam;x++){
+
 			for(int y=0;y<tam;y++){
-				c = tab [x, y];
-				int estado = c.GetComponent<Casilla> ().getEstado ();
+
+				int estado = tab [x, y].GetComponent<Casilla> ().getEstado ();
+
 				if (estado == 1) {
-					c.GetComponent<Casilla> ().PonerColorFicha (Jugador1);
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (Jugador1);
 				} else if(estado == 2){
-					c.GetComponent<Casilla> ().PonerColorFicha (Jugador2);
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (Jugador2);
 				}else 
-					c.GetComponent<Casilla> ().PonerColorFicha (vacio);
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (vacio);
 			}
 		}
-	
+
 	}//fin pintar
 
 
 
 	public void pintarPosibleJugadas (){
-		
-		GameObject c;
+
 		if(pistas)
-		for(int x=0; x<tam;x++){
-			for (int y = 0; y < tam; y++) {
-				c = tab [x, y];
-				bool jposible = c.GetComponent<Casilla> ().isMovimientoPosible ();
-				if (jposible) {
-					c.GetComponent<Casilla> ().PonerColorFicha (posibleJ);
+			for(int x=0; x<tam;x++){
+				for (int y = 0; y < tam; y++) {
+
+					if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
+						tab [x, y].GetComponent<Casilla> ().PonerColorFicha (posibleJ);
+					}
 				}
 			}
-		}
 		else
 			for(int x=0; x<tam;x++){
 				for (int y = 0; y < tam; y++) {
-					c = tab [x, y];
-					bool jposible = c.GetComponent<Casilla> ().isMovimientoPosible ();
-					if (jposible) {
-						c.GetComponent<Casilla> ().PonerColorFicha (vacio);
+
+					if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
+						tab [x, y].GetComponent<Casilla> ().PonerColorFicha (vacio);
 					}
 				}
 			}
@@ -537,33 +549,122 @@ public class CrearCasillas : MonoBehaviour {
 
 	public GameObject Inteligencia(){
 
-
-		int jugada = Random.Range (0,numeroMovimientosPosibles);
-		int contVeces = 0;
-
+		int contv = 0;
 		for(int x=0; x<tam;x++){
 			for (int y = 0; y < tam; y++) {
 
-				if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
-					if (jugada == contVeces) {
-						return tab [x, y];
-					} 
-					contVeces++;
+				if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) { 
+					contv++;
 				}
 			}
 		}
+
+		numeroMovimientosPosibles = contv;
+		int jugada = Random.Range (0,numeroMovimientosPosibles);
+		int contVeces = 0;
+		if(numeroMovimientosPosibles > 0)
+			for(int x=0; x<tam;x++){
+				for (int y = 0; y < tam; y++) {
+
+					if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
+						if (jugada == contVeces) {
+							return tab [x, y];
+						} 
+						contVeces++;
+					}
+				}
+			}
 
 		return null;
 
 	}
 
+	public void validar(){
 
+		finJuego = true;
 
+		for(int x=0; x<tam;x++){
+			for (int y = 0; y < tam; y++) {
 
+				if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
+					finJuego = false;
+					break;
+				}
+			}
+		}
+
+		if (finJuego) {
+
+			cambiarTurno2 ();
+
+			for(int x=0; x<tam;x++){
+				for (int y = 0; y < tam; y++) {
+
+					if (tab [x, y].GetComponent<Casilla> ().isMovimientoPosible ()) {
+						finJuego = false;
+						break;
+					}
+				}
+			}
+			if (!finJuego) {
+				cambiarTurno2 ();
+				if(IA) print ("IA " + turno + " pierde turno");
+				else print ("Jugador " + turno + " pierde turno");
+				cambiarTurno();//sigue el otro
+			}
+		}
+	}
+
+	public void Puntajes (){
+
+		puntos1 = 0;
+		puntos2 = 0;
+
+		for(int x=0; x<tam;x++){
+			for (int y = 0; y < tam; y++) {
+
+				if (tab [x, y].GetComponent<Casilla> ().getEstado() == 1) {
+					puntos1++;
+				}else if(tab [x, y].GetComponent<Casilla> ().getEstado() == 2){
+					puntos2++;
+				}
+			}
+		}
+
+		print ("J1 = NEGRAS = " + puntos1);
+		if (IA)
+			print ("IA = BLANCAS = " + puntos2);
+		else
+			print ("J2 = BLANCAS = " + puntos2);
+
+	}
+
+	public void pintarFIN(){
+
+		int contador1 = 0;
+		int contador2 = 0;
+
+		for(int x=0; x<tam;x++){
+
+			for(int y=0;y<tam;y++){
+
+				if ( contador1 < puntos1 ) {
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (Jugador1);
+					contador1++;
+
+				} else if(contador2 < puntos2){
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (Jugador2);
+					contador2++;
+				}else 
+					tab [x, y].GetComponent<Casilla> ().PonerColorFicha (vacio);
+			}
+		}
+
+	}
 
 
 	//ciclo que se realiza constantemente
-	void Update() {
+	void Update(){
 
 		//solo voy a evaluar si ya inicio una partida.
 		if (inicio == false) {
@@ -572,40 +673,48 @@ public class CrearCasillas : MonoBehaviour {
 			for(int a=0; a<64;a++){
 				c = tablero [a];
 
-				if (c.GetComponent<Casilla> ().getPresionada () ) {
-					if(c.GetComponent<Casilla> ().isMovimientoPosible()){
-						
-						Jugar(c.GetComponent<Casilla> ().getFila(),c.GetComponent<Casilla> ().getColu());
+				if (c.GetComponent<Casilla> ().getPresionada () && !finJuego) {
+
+					if (c.GetComponent<Casilla> ().isMovimientoPosible ()) {
+
+						Jugar (c.GetComponent<Casilla> ().getFila (), c.GetComponent<Casilla> ().getColu ());
 						pintar ();
-						cambiarTurno();
+						cambiarTurno ();
+						validar ();
 
 						if (IA) {
-							c = Inteligencia();
+							c = Inteligencia ();
 							if (c) {
 								Jugar (c.GetComponent<Casilla> ().getFila (), c.GetComponent<Casilla> ().getColu ());
 								pintar ();
-								cambiarTurno ();
 							} else {
-								print ("pierde turno");
-								cambiarTurno ();
+								print ("IA PIERDE TURNO");
 							}
-
+							cambiarTurno ();
+							validar ();
 						}
-							
-						break;
-						//------------termino el proceso de cambiar estado de la casilla
-					}else{
-						print ("movimiento no valido");
-					}
 
-				}//fin presionada
+						if (finJuego) {
+							print("FIN JUEGO");
+							Puntajes ();
+							pintarFIN ();
+						}
+						if (pistas)
+							Pistas ();
+						break;
+
+					} else {
+						//print ("movimiento no valido");
+						EditorUtility.DisplayDialog ("Jugada Erronea", "Has jugado en una casilla incorrecta", "ok");
+					}
+					c.GetComponent<Casilla> ().NoPresionar ();
+				} //fin presionada
 			}
 		}
-
-
 	}//fin update
 
 	public void HideGameObject() {
+		colorJugadorActual.SetActive (false);
 		GameObject c;
 		for (int x = 0; x < 64; x++) {
 			c = tablero [x];
@@ -614,10 +723,12 @@ public class CrearCasillas : MonoBehaviour {
 	}
 
 	public void ShowGameObject() {
+		colorJugadorActual.SetActive (true);
 		GameObject c;
 		for (int x = 0; x < 64; x++) {
 			c = tablero [x];
 			c.SetActive (true);
 		}	
 	}
+
 }

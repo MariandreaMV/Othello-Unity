@@ -20,6 +20,10 @@ public class Casilla : MonoBehaviour {
 	public bool getPresionada(){
 		return presionada;
 	}
+
+	public void NoPresionar() {
+		presionada = false;
+	}
 	public void AsignarNumeroCasilla(int numero){
 		numCasilla = numero;
 	}
